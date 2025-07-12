@@ -1,0 +1,63 @@
+# music_player
+My first repository on GitHub
+import tkinter as tk
+from tkinter import filedialog
+import pygame
+import os
+
+# Initialize Pygame mixer
+pygame.init()
+pygame.mixer.init()
+
+# Music Player class
+class MusicPlayer:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Python Music Player")
+        self.root.geometry("400x250")
+
+        self.current_file = ""
+        self.is_paused = False
+
+        # Song label
+        self.label = tk.Label(root, text="No file selected", fg="blue", wraplength=350)
+        self.label.pack(pady=20)
+
+        # Control Buttons
+        tk.Button(root, text="Open File", command=self.load_file, width=20).pack(pady=5)
+        tk.Button(root, text="Play", command=self.play_music, width=20).pack(pady=5)
+        tk.Button(root, text="Pause / Resume", command=self.pause_resume_music, width=20).pack(pady=5)
+        tk.Button(root, text="Stop", command=self.stop_music, width=20).pack(pady=5)
+
+    def load_file(self):
+        file_path = filedialog.askopenfilename(filetypes=[("MP3 files", "*.mp3")])
+        if file_path:
+            self.current_file = file_path
+            self.label.config(text=os.path.basename(file_path))
+            pygame.mixer.music.load(self.current_file)
+            self.is_paused = False
+
+    def play_music(self):
+        if self.current_file:
+            pygame.mixer.music.play()
+            self.is_paused = False
+
+    def pause_resume_music(self):
+        if pygame.mixer.music.get_busy():
+            if self.is_paused:
+                pygame.mixer.music.unpause()
+                self.is_paused = False
+            else:
+                pygame.mixer.music.pause()
+                self.is_paused = True
+
+    def stop_music(self):
+        pygame.mixer.music.stop()
+        self.is_paused = False
+
+
+# Main loop
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = MusicPlayer(root)
+    root.mainloop()
